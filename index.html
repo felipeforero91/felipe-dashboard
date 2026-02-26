@@ -2366,20 +2366,38 @@ function sanitizeAccidentalPasteNoise(){
   toRemove.forEach(n=>n.remove());
 }
 
+
+window.addEventListener("error", ()=>{
+  const splash=document.getElementById("splash");
+  if(splash) splash.classList.add("hide");
+});
+window.addEventListener("unhandledrejection", ()=>{
+  const splash=document.getElementById("splash");
+  if(splash) splash.classList.add("hide");
+});
+
 /** ========= Init ========= */
 (function init(){
   sanitizeAccidentalPasteNoise();
   const splash=document.getElementById("splash");
-  appVersionBadge.textContent = `v${APP_VERSION}`;
-  setTimeout(()=>splash.classList.add("hide"), 700);
 
-  const now=new Date();
-  state.weekKey=getWeekKey(now);
-  state.selectedDay=dayKeyFromDate(now);
-  daySelect.value=state.selectedDay;
-  render();
+  // Nunca bloquear el inicio por elementos opcionales o errores de runtime.
+  if(appVersionBadge) appVersionBadge.textContent = `v${APP_VERSION}`;
+
+  const hideSplash=()=>{ if(splash) splash.classList.add("hide"); };
+  setTimeout(hideSplash, 700);
+
+  try{
+    const now=new Date();
+    state.weekKey=getWeekKey(now);
+    state.selectedDay=dayKeyFromDate(now);
+    if(daySelect) daySelect.value=state.selectedDay;
+    render();
+  }catch(err){
+    console.error("Init error:", err);
+    hideSplash();
+  }
 })();
 </script>
 </body>
 </html>
-
