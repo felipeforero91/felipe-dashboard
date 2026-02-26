@@ -1228,7 +1228,7 @@ resetWeekBtn.onclick=()=>{
     button:active{transform:translateY(1px)}
     .ghost{background:transparent}
 
-    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:16px;}
+    .grid{display:grid; grid-template-columns: .9fr 1.1fr; gap:18px;}
     @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
     .card{
       background: linear-gradient(180deg, rgba(15,22,32,.92), rgba(15,22,32,.72));
@@ -1326,7 +1326,7 @@ resetWeekBtn.onclick=()=>{
     @media (max-width: 520px){ .kpis{grid-template-columns:1fr} }
     .kpi{background: rgba(16,27,40,.55); border:1px solid rgba(31,42,58,.8); border-radius:16px; padding:12px;}
     .kpi .label{font-size:12px;color:var(--muted)}
-    .kpi .value{font-size:24px;font-weight:900;margin-top:6px}
+    .kpi .value{font-size:28px;font-weight:900;margin-top:6px}
     .kpi .sub{font-size:12px;color:var(--muted);margin-top:4px}
     .list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
     .row{
@@ -1470,11 +1470,14 @@ resetWeekBtn.onclick=()=>{
       background: rgba(11,15,20,.35);
       padding:14px;
     }
-    .workcard h3{margin:0 0 8px; font-size:13px; color:var(--text)}
+    .workcard h3{margin:0 0 10px; font-size:18px; color:var(--text)}
     .work-kpis{display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:8px}
     .work-kpi{border:1px solid rgba(31,42,58,.8); border-radius:12px; background:rgba(16,27,40,.45); padding:8px}
     .work-kpi .label{font-size:11px;color:var(--muted)}
-    .work-kpi .value{font-size:16px;font-weight:900;margin-top:4px}
+    .work-kpi .value{font-size:22px;font-weight:900;margin-top:4px}
+    .work-log-form{display:none; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap}
+    .work-log-form.show{display:flex}
+    .work-log-form input{width:140px}
     .work-days{display:flex; flex-direction:column; gap:6px; margin-top:8px}
     .work-row{display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid rgba(31,42,58,.75); border-radius:11px; padding:7px 9px; background:rgba(16,27,40,.35); font-size:12px}
     .work-row .oktxt{color:var(--good); font-weight:700}
@@ -1580,6 +1583,11 @@ resetWeekBtn.onclick=()=>{
         <div class="hint" id="workTodayWindow">Hoy: -</div>
         <div class="work-actions">
           <button id="workLogBtn" class="mini">🕒 Registrar horas de hoy</button>
+          <div class="work-log-form" id="workLogForm">
+            <input id="workHoursInput" type="number" min="0" step="0.5" placeholder="Horas (ej: 6.5)" />
+            <button id="workSaveBtn" class="mini ok">Guardar</button>
+            <button id="workCancelBtn" class="mini ghost">Cancelar</button>
+          </div>
         </div>
         <div class="work-days" id="workDaysList"></div>
       </div>
@@ -1798,6 +1806,10 @@ const workWeekPct=document.getElementById("workWeekPct");
 const workTodayWindow=document.getElementById("workTodayWindow");
 const workDaysList=document.getElementById("workDaysList");
 const workLogBtn=document.getElementById("workLogBtn");
+const workLogForm=document.getElementById("workLogForm");
+const workHoursInput=document.getElementById("workHoursInput");
+const workSaveBtn=document.getElementById("workSaveBtn");
+const workCancelBtn=document.getElementById("workCancelBtn");
 const appVersionBadge=document.getElementById("appVersionBadge");
 
 const modalBack=document.getElementById("modalBack");
@@ -2364,14 +2376,23 @@ resetWeekBtn.onclick=()=>{
   }
 };
 
+function toggleWorkForm(show){
+  if(!workLogForm) return;
+  workLogForm.classList.toggle("show", !!show);
+}
+
 function handleWorkLog(){
   const day=state.selectedDay;
-  const plan=WORK_PLAN[day]||{targetHours:0};
   const rec=getWorkRecord(state.weekKey, day);
-  const typed=prompt(`Horas trabajadas hoy (${labelDay(day)}).
-Meta: ${plan.targetHours||0}h`, String(rec.hours||0));
-  if(typed==null) return;
-  const normalized=String(typed).replace(",", ".").trim();
+  if(workHoursInput) workHoursInput.value=String(rec.hours||0);
+  toggleWorkForm(true);
+  if(workHoursInput) workHoursInput.focus();
+}
+
+function saveWorkHoursFromInput(){
+  const day=state.selectedDay;
+  const value=workHoursInput ? workHoursInput.value : "";
+  const normalized=String(value).replace(",", ".").trim();
   const hours=Number(normalized);
   if(Number.isNaN(hours) || hours<0){
     alert("Ingresa un número válido de horas (ej: 6.5)");
@@ -2379,8 +2400,19 @@ Meta: ${plan.targetHours||0}h`, String(rec.hours||0));
   }
   setWorkHours(state.weekKey, day, hours);
   renderWorkStats();
+  toggleWorkForm(false);
 }
+
 if(workLogBtn) workLogBtn.onclick=handleWorkLog;
+if(workSaveBtn) workSaveBtn.onclick=saveWorkHoursFromInput;
+if(workCancelBtn) workCancelBtn.onclick=()=>toggleWorkForm(false);
+if(workHoursInput){
+  workHoursInput.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") saveWorkHoursFromInput();
+    if(e.key==="Escape") toggleWorkForm(false);
+  });
+}
+
 document.addEventListener("click",(e)=>{
   const btn=e.target.closest("#workLogBtn");
   if(!btn) return;
@@ -2445,3 +2477,4 @@ window.addEventListener("unhandledrejection", ()=>{
 </script>
 </body>
 </html>
+
