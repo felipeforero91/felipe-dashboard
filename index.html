@@ -1228,7 +1228,7 @@ resetWeekBtn.onclick=()=>{
     button:active{transform:translateY(1px)}
     .ghost{background:transparent}
 
-    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px;}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:16px;}
     @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
     .card{
       background: linear-gradient(180deg, rgba(15,22,32,.92), rgba(15,22,32,.72));
@@ -1326,7 +1326,7 @@ resetWeekBtn.onclick=()=>{
     @media (max-width: 520px){ .kpis{grid-template-columns:1fr} }
     .kpi{background: rgba(16,27,40,.55); border:1px solid rgba(31,42,58,.8); border-radius:16px; padding:12px;}
     .kpi .label{font-size:12px;color:var(--muted)}
-    .kpi .value{font-size:20px;font-weight:900;margin-top:6px}
+    .kpi .value{font-size:24px;font-weight:900;margin-top:6px}
     .kpi .sub{font-size:12px;color:var(--muted);margin-top:4px}
     .list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
     .row{
@@ -1464,11 +1464,11 @@ resetWeekBtn.onclick=()=>{
     }
 
     .workcard{
-      margin-top:12px;
+      margin-top:16px;
       border:1px solid rgba(80,95,120,.55);
-      border-radius:14px;
+      border-radius:16px;
       background: rgba(11,15,20,.35);
-      padding:10px;
+      padding:14px;
     }
     .workcard h3{margin:0 0 8px; font-size:13px; color:var(--text)}
     .work-kpis{display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:8px}
@@ -1753,6 +1753,21 @@ function ensurePath(obj,path,fallback){
 function labelDay(dayKey){
   const map={mon:"Lunes",tue:"Martes",wed:"Miércoles",thu:"Jueves",fri:"Viernes",sat:"Sábado",sun:"Domingo"};
   return map[dayKey]||dayKey;
+}
+
+/** ========= Cleanup duplicated layout (defensive) ========= */
+function removeDuplicatedLayout(){
+  const headers=[...document.querySelectorAll('body > header')];
+  headers.slice(1).forEach(h=>h.remove());
+
+  const topWrappers=[...document.querySelectorAll('.wrap')].filter(w=>w.querySelector('.toprow h1'));
+  topWrappers.slice(1).forEach(w=>w.remove());
+
+  const idsToDedup=['daySelect','goTodayBtn','weeklyReportBtn','exportBtn','importBtn','resetWeekBtn','tasks','kpiToday','kpiWeek','kpiStreak','workLogBtn','workWeekHours','workWeekTarget','workWeekPct'];
+  for(const id of idsToDedup){
+    const nodes=[...document.querySelectorAll(`#${id}`)];
+    nodes.slice(1).forEach(n=>n.remove());
+  }
 }
 
 /** ========= State + DOM ========= */
@@ -2333,11 +2348,12 @@ resetWeekBtn.onclick=()=>{
   }
 };
 
-workLogBtn.onclick=()=>{
+function handleWorkLog(){
   const day=state.selectedDay;
   const plan=WORK_PLAN[day]||{targetHours:0};
   const rec=getWorkRecord(state.weekKey, day);
-  const typed=prompt(`Horas trabajadas hoy (${labelDay(day)}).\nMeta: ${plan.targetHours||0}h`, String(rec.hours||0));
+  const typed=prompt(`Horas trabajadas hoy (${labelDay(day)}).
+Meta: ${plan.targetHours||0}h`, String(rec.hours||0));
   if(typed==null) return;
   const normalized=String(typed).replace(",", ".").trim();
   const hours=Number(normalized);
@@ -2347,7 +2363,15 @@ workLogBtn.onclick=()=>{
   }
   setWorkHours(state.weekKey, day, hours);
   renderWorkStats();
-};
+}
+if(workLogBtn) workLogBtn.onclick=handleWorkLog;
+document.addEventListener("click",(e)=>{
+  const btn=e.target.closest("#workLogBtn");
+  if(!btn) return;
+  if(btn===workLogBtn) return;
+  handleWorkLog();
+});
+
 
 /** ========= Defensive cleanup (accidental diff/paste noise) ========= */
 function sanitizeAccidentalPasteNoise(){
@@ -2381,6 +2405,7 @@ window.addEventListener("unhandledrejection", ()=>{
 
 /** ========= Init ========= */
 (function init(){
+  removeDuplicatedLayout();
   sanitizeAccidentalPasteNoise();
   const splash=document.getElementById("splash");
 
