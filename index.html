@@ -1731,7 +1731,7 @@ const WORK_PLAN = {
 const WEIGHTS = { musica_min:3, musica_deep:5, gym:2, skate:2, italiano:1, edicion:2, foto:2, animacion:2, tatuar:2 };
 
 /** ========= Storage ========= */
-const APP_VERSION="2026.02.26-3";
+const APP_VERSION="2026.02.26-4";
 const LS_KEY="felipe_forero_dashboard_v3";
 function loadData(){try{return JSON.parse(localStorage.getItem(LS_KEY))||{}}catch(e){return{}}}
 function saveData(data){localStorage.setItem(LS_KEY, JSON.stringify(data));}
@@ -2358,6 +2358,22 @@ function forceHardRefresh(){
   }
 }
 
+
+function ensureVersionQuery(){
+  const key='ff_version_sync_done';
+  const done=sessionStorage.getItem(key);
+  const url=new URL(window.location.href);
+  const v=url.searchParams.get('v')||'';
+  if(done===APP_VERSION && v.startsWith(APP_VERSION)) return;
+  if(!v.startsWith(APP_VERSION)){
+    url.searchParams.set('v', `${APP_VERSION}-${Date.now()}`);
+    sessionStorage.setItem(key, APP_VERSION);
+    window.location.replace(url.toString());
+    return;
+  }
+  sessionStorage.setItem(key, APP_VERSION);
+}
+
 /** ========= Events ========= */
 daySelect.onchange=()=>{ state.selectedDay=daySelect.value; render(); };
 goTodayBtn.onclick=()=>{ state.selectedDay=dayKeyFromDate(new Date()); daySelect.value=state.selectedDay; render(); };
@@ -2384,9 +2400,30 @@ function toggleWorkForm(show){
 function handleWorkLog(){
   const day=state.selectedDay;
   const rec=getWorkRecord(state.weekKey, day);
-  if(workHoursInput) workHoursInput.value=String(rec.hours||0);
-  toggleWorkForm(true);
-  if(workHoursInput) workHoursInput.focus();
+  const plan=WORK_PLAN[day]||{targetHours:0};
+
+  // Experiencia directa: abre prompt al click (como esperabas).
+  const typed=prompt(`Horas trabajadas hoy (${labelDay(day)}).\nMeta: ${plan.targetHours||0}h`, String(rec.hours||0));
+
+  // Si el prompt se bloquea/cancela, dejamos también el formulario inline visible.
+  if(typed==null){
+    if(workHoursInput) workHoursInput.value=String(rec.hours||0);
+    toggleWorkForm(true);
+    if(workHoursInput) workHoursInput.focus();
+    return;
+  }
+
+  const normalized=String(typed).replace(",", ".").trim();
+  const hours=Number(normalized);
+  if(Number.isNaN(hours) || hours<0){
+    alert("Ingresa un número válido de horas (ej: 6.5)");
+    if(workHoursInput) workHoursInput.value=String(rec.hours||0);
+    toggleWorkForm(true);
+    return;
+  }
+  setWorkHours(state.weekKey, day, hours);
+  renderWorkStats();
+  toggleWorkForm(false);
 }
 
 function saveWorkHoursFromInput(){
@@ -2453,6 +2490,7 @@ window.addEventListener("unhandledrejection", ()=>{
 
 /** ========= Init ========= */
 (function init(){
+  ensureVersionQuery();
   removeDuplicatedLayout();
   sanitizeAccidentalPasteNoise();
   const splash=document.getElementById("splash");
@@ -2477,4 +2515,5 @@ window.addEventListener("unhandledrejection", ()=>{
 </script>
 </body>
 </html>
+
 
