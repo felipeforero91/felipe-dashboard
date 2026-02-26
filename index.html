@@ -1478,6 +1478,7 @@ resetWeekBtn.onclick=()=>{
     .work-log-form{display:none; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap}
     .work-log-form.show{display:flex}
     .work-log-form input{width:140px}
+    .work-feedback{margin-top:8px; min-height:18px}
     .work-days{display:flex; flex-direction:column; gap:6px; margin-top:8px}
     .work-row{display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid rgba(31,42,58,.75); border-radius:11px; padding:7px 9px; background:rgba(16,27,40,.35); font-size:12px}
     .work-row .oktxt{color:var(--good); font-weight:700}
@@ -1582,13 +1583,14 @@ resetWeekBtn.onclick=()=>{
         </div>
         <div class="hint" id="workTodayWindow">Hoy: -</div>
         <div class="work-actions">
-          <button id="workLogBtn" class="mini">🕒 Registrar horas de hoy</button>
+          <button id="workLogBtn" type="button" class="mini">🕒 Registrar horas de hoy</button>
           <div class="work-log-form" id="workLogForm">
             <input id="workHoursInput" type="number" min="0" step="0.5" placeholder="Horas (ej: 6.5)" />
-            <button id="workSaveBtn" class="mini ok">Guardar</button>
-            <button id="workCancelBtn" class="mini ghost">Cancelar</button>
+            <button id="workSaveBtn" type="button" class="mini ok">Guardar</button>
+            <button id="workCancelBtn" type="button" class="mini ghost">Cancelar</button>
           </div>
         </div>
+        <div id="workFeedback" class="hint work-feedback"></div>
         <div class="work-days" id="workDaysList"></div>
       </div>
     </aside>
@@ -1810,6 +1812,7 @@ const workLogForm=document.getElementById("workLogForm");
 const workHoursInput=document.getElementById("workHoursInput");
 const workSaveBtn=document.getElementById("workSaveBtn");
 const workCancelBtn=document.getElementById("workCancelBtn");
+const workFeedback=document.getElementById("workFeedback");
 const appVersionBadge=document.getElementById("appVersionBadge");
 
 const modalBack=document.getElementById("modalBack");
@@ -2401,31 +2404,11 @@ function handleWorkLog(){
   const day=state.selectedDay;
   const rec=getWorkRecord(state.weekKey, day);
   const plan=WORK_PLAN[day]||{targetHours:0};
-
-  // Experiencia directa: abre prompt al click (como esperabas).
-  const typed=prompt(`Horas trabajadas hoy (${labelDay(day)}).\nMeta: ${plan.targetHours||0}h`, String(rec.hours||0));
-
-  // Si el prompt se bloquea/cancela, dejamos también el formulario inline visible.
-  if(typed==null){
-    if(workHoursInput) workHoursInput.value=String(rec.hours||0);
-    toggleWorkForm(true);
-    if(workHoursInput) workHoursInput.focus();
-    return;
-  }
-
-  const normalized=String(typed).replace(",", ".").trim();
-  const hours=Number(normalized);
-  if(Number.isNaN(hours) || hours<0){
-    alert("Ingresa un número válido de horas (ej: 6.5)");
-    if(workHoursInput) workHoursInput.value=String(rec.hours||0);
-    toggleWorkForm(true);
-    return;
-  }
-  setWorkHours(state.weekKey, day, hours);
-  renderWorkStats();
-  toggleWorkForm(false);
+  if(workHoursInput) workHoursInput.value=String(rec.hours||0);
+  if(workFeedback) workFeedback.textContent=`${labelDay(day)} • Meta: ${plan.targetHours||0}h`;
+  toggleWorkForm(true);
+  if(workHoursInput) workHoursInput.focus();
 }
-
 function saveWorkHoursFromInput(){
   const day=state.selectedDay;
   const value=workHoursInput ? workHoursInput.value : "";
@@ -2437,12 +2420,13 @@ function saveWorkHoursFromInput(){
   }
   setWorkHours(state.weekKey, day, hours);
   renderWorkStats();
+  if(workFeedback) workFeedback.textContent=`✅ Guardado: ${hours.toFixed(1)}h`;
   toggleWorkForm(false);
 }
 
 if(workLogBtn) workLogBtn.onclick=handleWorkLog;
 if(workSaveBtn) workSaveBtn.onclick=saveWorkHoursFromInput;
-if(workCancelBtn) workCancelBtn.onclick=()=>toggleWorkForm(false);
+if(workCancelBtn) workCancelBtn.onclick=()=>{ toggleWorkForm(false); if(workFeedback) workFeedback.textContent=""; };
 if(workHoursInput){
   workHoursInput.addEventListener("keydown",(e)=>{
     if(e.key==="Enter") saveWorkHoursFromInput();
