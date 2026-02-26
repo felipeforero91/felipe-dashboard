@@ -1517,6 +1517,7 @@ resetWeekBtn.onclick=()=>{
         <button id="weeklyReportBtn" class="ghost">Informe semanal</button>
         <button id="exportBtn" class="ghost">Exportar</button>
         <button id="importBtn" class="ghost">Importar</button>
+        <button id="hardRefreshBtn" class="ghost">Forzar actualización</button>
         <button id="resetWeekBtn" class="ghost danger">Reset semana</button>
       </div>
     </div>
@@ -1722,7 +1723,7 @@ const WORK_PLAN = {
 const WEIGHTS = { musica_min:3, musica_deep:5, gym:2, skate:2, italiano:1, edicion:2, foto:2, animacion:2, tatuar:2 };
 
 /** ========= Storage ========= */
-const APP_VERSION="2026.02.25";
+const APP_VERSION="2026.02.26-3";
 const LS_KEY="felipe_forero_dashboard_v3";
 function loadData(){try{return JSON.parse(localStorage.getItem(LS_KEY))||{}}catch(e){return{}}}
 function saveData(data){localStorage.setItem(LS_KEY, JSON.stringify(data));}
@@ -1781,6 +1782,7 @@ const resetWeekBtn=document.getElementById("resetWeekBtn");
 const weeklyReportBtn=document.getElementById("weeklyReportBtn");
 const exportBtn=document.getElementById("exportBtn");
 const importBtn=document.getElementById("importBtn");
+const hardRefreshBtn=document.getElementById("hardRefreshBtn");
 
 const kpiToday=document.getElementById("kpiToday");
 const kpiTodaySub=document.getElementById("kpiTodaySub");
@@ -2331,6 +2333,19 @@ function uploadJson(){
   inp.click();
 }
 
+function forceHardRefresh(){
+  const go=()=>{
+    const url=new URL(window.location.href);
+    url.searchParams.set('v', `${APP_VERSION}-${Date.now()}`);
+    window.location.replace(url.toString());
+  };
+  if('caches' in window){
+    caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).finally(go);
+  }else{
+    go();
+  }
+}
+
 /** ========= Events ========= */
 daySelect.onchange=()=>{ state.selectedDay=daySelect.value; render(); };
 goTodayBtn.onclick=()=>{ state.selectedDay=dayKeyFromDate(new Date()); daySelect.value=state.selectedDay; render(); };
@@ -2339,6 +2354,7 @@ weeklyReportBtn.onclick=generateWeeklyReport;
 
 exportBtn.onclick=()=>download(`felipe_forero_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(state.data,null,2));
 importBtn.onclick=uploadJson;
+if(hardRefreshBtn) hardRefreshBtn.onclick=forceHardRefresh;
 
 resetWeekBtn.onclick=()=>{
   if(confirm("¿Seguro? Esto borra TODOS los datos de esta semana.")){
