@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
-  <title>Felipe Forero</title>
+  <title>Felipe king Forero</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
@@ -1769,12 +1769,18 @@ function labelDay(dayKey){
 /** ========= Cleanup duplicated layout (defensive) ========= */
 function removeDuplicatedLayout(){
   const headers=[...document.querySelectorAll('body > header')];
-  headers.slice(1).forEach(h=>h.remove());
+  if(headers.length>1){
+    const preferred=headers.find(h=>h.querySelector('#hardRefreshBtn')) || headers[0];
+    headers.forEach(h=>{ if(h!==preferred) h.remove(); });
+  }
 
   const topWrappers=[...document.querySelectorAll('.wrap')].filter(w=>w.querySelector('.toprow h1'));
-  topWrappers.slice(1).forEach(w=>w.remove());
+  if(topWrappers.length>1){
+    const preferred=topWrappers.find(w=>w.querySelector('#hardRefreshBtn')) || topWrappers[0];
+    topWrappers.forEach(w=>{ if(w!==preferred) w.remove(); });
+  }
 
-  const idsToDedup=['daySelect','goTodayBtn','weeklyReportBtn','exportBtn','importBtn','resetWeekBtn','tasks','kpiToday','kpiWeek','kpiStreak','workLogBtn','workWeekHours','workWeekTarget','workWeekPct'];
+  const idsToDedup=['daySelect','goTodayBtn','weeklyReportBtn','exportBtn','importBtn','hardRefreshBtn','resetWeekBtn','tasks','kpiToday','kpiWeek','kpiStreak','workLogBtn','workWeekHours','workWeekTarget','workWeekPct'];
   for(const id of idsToDedup){
     const nodes=[...document.querySelectorAll(`#${id}`)];
     nodes.slice(1).forEach(n=>n.remove());
@@ -2435,11 +2441,27 @@ if(workHoursInput){
 }
 
 document.addEventListener("click",(e)=>{
-  const btn=e.target.closest("#workLogBtn");
+  const btn=e.target.closest("#workLogBtn, button");
   if(!btn) return;
+  const txt=(btn.textContent||"").toLowerCase();
+  const isWorkBtn=btn.id==="workLogBtn" || txt.includes("registrar horas");
+  if(!isWorkBtn) return;
   if(btn===workLogBtn) return;
   handleWorkLog();
 });
+
+
+function rebindDynamicControls(){
+  const btn=document.getElementById("workLogBtn");
+  const save=document.getElementById("workSaveBtn");
+  const cancel=document.getElementById("workCancelBtn");
+  const hard=document.getElementById("hardRefreshBtn");
+
+  if(btn) btn.onclick=handleWorkLog;
+  if(save) save.onclick=saveWorkHoursFromInput;
+  if(cancel) cancel.onclick=()=>{ toggleWorkForm(false); if(workFeedback) workFeedback.textContent=""; };
+  if(hard) hard.onclick=forceHardRefresh;
+}
 
 
 /** ========= Defensive cleanup (accidental diff/paste noise) ========= */
@@ -2477,6 +2499,7 @@ window.addEventListener("unhandledrejection", ()=>{
   ensureVersionQuery();
   removeDuplicatedLayout();
   sanitizeAccidentalPasteNoise();
+  rebindDynamicControls();
   const splash=document.getElementById("splash");
 
   // Nunca bloquear el inicio por elementos opcionales o errores de runtime.
@@ -2499,5 +2522,3 @@ window.addEventListener("unhandledrejection", ()=>{
 </script>
 </body>
 </html>
-
-
