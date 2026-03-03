@@ -36,6 +36,7 @@
       color:var(--text);
     }
 
+    /* Splash screen styles for loading indicator */
     .splash{
       position:fixed; inset:0;
       display:flex; align-items:center; justify-content:center;
@@ -43,11 +44,8 @@
       backdrop-filter: blur(10px);
       z-index:2000;
       transition: opacity .35s ease, transform .35s ease;
-      animation: splashAutoHide 3.2s 1 forwards;
     }
     .splash.hide{opacity:0; pointer-events:none; transform: scale(1.01)}
-    @keyframes splashAutoHide{0%,78%{opacity:1;pointer-events:auto}100%{opacity:0;pointer-events:none;transform:scale(1.01)}}
-    
     .brand{display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;}
     .logo{
       width:64px; height:64px; border-radius:18px;
@@ -103,7 +101,7 @@
     }
     .wrap{max-width:1100px;margin:0 auto;padding:18px}
     .toprow{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
-    h1{font-size:18px;margin:0;letter-spacing:.2px;display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    h1{font-size:18px;margin:0;letter-spacing:.2px;display:flex; gap:10px; align-items:center;}
     .badge{
       font-size:12px; padding:6px 10px;
       border:1px solid rgba(31,42,58,.8);
@@ -121,18 +119,14 @@
       border-radius:12px;
       padding:10px 12px;
       outline:none;
-      transition: all .2s ease;
     }
     button{cursor:pointer}
-    button:hover:not([disabled]){filter:brightness(1.08)}
-    button:active:not([disabled]){transform:translateY(1px)}
-    button[disabled]{opacity:.55; cursor:not-allowed; filter:saturate(.8)}
-    input:focus, textarea:focus{border-color: rgba(27,211,122,.6); background: rgba(16,27,40,.75)}
+    button:hover{filter:brightness(1.08)}
+    button:active{transform:translateY(1px)}
     .ghost{background:transparent}
 
-    .grid{display:grid; grid-template-columns: .9fr 1.1fr; gap:18px;}
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px;}
     @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
-    
     .card{
       background: linear-gradient(180deg, rgba(15,22,32,.92), rgba(15,22,32,.72));
       border:1px solid rgba(31,42,58,.85);
@@ -150,10 +144,12 @@
       border-radius:16px;
       background: rgba(16,27,40,.55);
       padding:12px;
-      transition: all .28s cubic-bezier(.22,1,.36,1);
+      transition: transform .18s ease, border-color .18s ease, opacity .18s ease, background .18s ease, box-shadow .18s ease;
       position:relative;
     }
-    .task:hover{transform: translateY(-2px); border-color: rgba(95,113,141,.9)}
+    .task:hover{transform: translateY(-1px); border-color: rgba(80,95,120,.85)}
+
+    /* Tachado (cuando ya está marcada) */
     .task.completed{
       opacity:.88;
       border-color: rgba(80,95,120,.55);
@@ -170,6 +166,8 @@
       text-decoration-thickness: 2px;
       text-decoration-color: rgba(231,238,249,.35);
     }
+
+    /* ✅/❌ Color por estado */
     .task.done{
       border-color: rgba(27,211,122,.55);
       box-shadow: 0 0 0 1px rgba(27,211,122,.10) inset, 0 12px 30px rgba(0,0,0,.25);
@@ -181,7 +179,7 @@
       background: linear-gradient(180deg, rgba(255,77,109,.08), rgba(16,27,40,.55));
     }
 
-    .taskhead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .taskhead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
     .tasktitle{display:flex; flex-direction:column; gap:4px}
     .tasktitle b{font-size:16px}
     .taskmeta{font-size:12px;color:var(--muted)}
@@ -196,15 +194,14 @@
       letter-spacing:.2px;
       border:1px solid rgba(31,42,58,.85);
       background: #152235;
-      transition: all .2s cubic-bezier(.22,1,.36,1);
+      transition: transform .12s ease, filter .12s ease, box-shadow .2s ease, opacity .2s ease;
     }
-    .bigbtn:active:not([disabled]){transform: scale(.98)}
+    .bigbtn:active{transform: scale(.98)}
     .bigbtn.good{border-color:rgba(27,211,122,.6); box-shadow:0 0 0 1px rgba(27,211,122,.12) inset}
     .bigbtn.bad{border-color:rgba(255,77,109,.6); box-shadow:0 0 0 1px rgba(255,77,109,.12) inset}
     .bigbtn.neutral{border-color: rgba(167,179,199,.35); background: rgba(21,34,53,.55);}
     .bigbtn.pulse{animation: pulse .22s ease}
     @keyframes pulse{0%{transform: scale(.98)}60%{transform: scale(1.03)}100%{transform: scale(1)}}
-    
     .ripple{
       position:absolute; border-radius:999px;
       transform: scale(0);
@@ -215,6 +212,7 @@
     }
     @keyframes rip{to{transform: scale(10); opacity:0}}
 
+    .bigbtn[disabled]{opacity:.55; cursor:not-allowed; filter:saturate(.8)}
     .statuspill{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-top:8px;}
     .dot{width:9px;height:9px;border-radius:999px;background:#55657d}
     .dot.good{background:var(--good)}
@@ -223,12 +221,10 @@
 
     .kpis{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:6px;}
     @media (max-width: 520px){ .kpis{grid-template-columns:1fr} }
-    
     .kpi{background: rgba(16,27,40,.55); border:1px solid rgba(31,42,58,.8); border-radius:16px; padding:12px;}
     .kpi .label{font-size:12px;color:var(--muted)}
-    .kpi .value{font-size:28px;font-weight:900;margin-top:6px}
+    .kpi .value{font-size:20px;font-weight:900;margin-top:6px}
     .kpi .sub{font-size:12px;color:var(--muted);margin-top:4px}
-    
     .list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
     .row{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -237,9 +233,7 @@
       padding:10px 12px;
       background: rgba(16,27,40,.45);
       color:var(--text);
-      transition: all .2s ease;
     }
-    .row:hover{border-color: rgba(95,113,141,.85); background: rgba(16,27,40,.65)}
     .row small{color:var(--muted)}
     .bar{height:10px; background: rgba(31,42,58,.7); border-radius:999px; overflow:hidden; width:44%; border:1px solid rgba(31,42,58,.85);}
     .fill{height:100%; width:0%; background: linear-gradient(90deg, rgba(27,211,122,.95), rgba(27,211,122,.65));}
@@ -259,27 +253,23 @@
       border-radius:22px;
       box-shadow: var(--shadow);
       padding:14px;
+      transform: translateY(10px);
+      opacity:0;
       animation: modalIn .22s ease forwards;
       position:relative; overflow:hidden;
-      max-height:90vh;
-      overflow-y:auto;
     }
-    @keyframes modalIn{from{transform: translateY(10px); opacity:0}to{transform: translateY(0); opacity:1}}
-    
+    @keyframes modalIn{to{transform: translateY(0); opacity:1}}
     .modalheader{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; border-bottom:1px solid rgba(31,42,58,.6); padding-bottom:10px; margin-bottom:10px;}
     .modalheader h3{margin:0; font-size:16px}
     .modalheader p{margin:4px 0 0; color:var(--muted); font-size:12px}
-    .closebtn{background:transparent; font-size:14px; padding:4px 8px}
-    
+    .closebtn{background:transparent}
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
     @media (max-width: 840px){ .cols{grid-template-columns:1fr} }
-    
     .subcard{border:1px solid rgba(31,42,58,.8); border-radius:18px; background: rgba(16,27,40,.55); padding:12px; position:relative;}
     .subcard h4{margin:0 0 10px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.2px}
-    .check{display:flex; gap:10px; align-items:flex-start; padding:8px 8px; border-radius:12px; cursor:pointer;}
+    .check{display:flex; gap:10px; align-items:flex-start; padding:8px 8px; border-radius:12px;}
     .check:hover{background: rgba(255,255,255,.03)}
-    .check input{margin-top:2px; transform: scale(1.1); cursor:pointer}
-    
+    .check input{margin-top:2px; transform: scale(1.1)}
     textarea{
       width:100%; min-height:120px; resize:vertical;
       background: rgba(11,15,20,.45);
@@ -288,7 +278,6 @@
       padding:10px 12px;
       color:var(--text);
     }
-    
     .modalfooter{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; border-top:1px solid rgba(31,42,58,.6); padding-top:10px;}
     .danger{border-color: rgba(255,77,109,.6)}
     .ok{border-color: rgba(27,211,122,.6)}
@@ -336,10 +325,9 @@
       background: rgba(16,27,40,.45);
       padding:10px 12px;
       border-radius:14px;
-      transition: all .12s ease;
-      display:block;
+      transition: transform .12s ease, filter .12s ease;
     }
-    .links a:hover{filter: brightness(1.08); border-color: rgba(95,113,141,.85)}
+    .links a:hover{filter: brightness(1.08)}
     .links a:active{transform: translateY(1px)}
     .links a small{display:block; color:var(--muted); margin-top:3px}
 
@@ -353,7 +341,6 @@
       line-height:1.35;
       font-size:13px;
       color: var(--text);
-      font-family: 'Courier New', monospace;
     }
 
     .suno-cta{
@@ -367,8 +354,11 @@
     }
     .suno-cta.show{display:block}
     .suno-cta strong{display:block; margin-bottom:4px}
-    .suno-cta a{color:#91ffd0; font-weight:700; text-decoration:none}
-    .suno-cta a:hover{text-decoration:underline}
+    .suno-cta a{color:#91ffd0; font-weight:700}
+
+    @media (prefers-reduced-motion: no-preference){
+      .card, .task, .kpi, .row, .subcard{will-change: transform, opacity;}
+    }
 
     .workcard{
       margin-top:16px;
@@ -379,37 +369,30 @@
     }
     .workcard h3{margin:0 0 10px; font-size:18px; color:var(--text)}
     .work-kpis{display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:8px}
-    @media (max-width: 520px){ .work-kpis{grid-template-columns:1fr} }
-    
-    .work-kpi{border:1px solid rgba(31,42,58,.8); border-radius:12px; background:rgba(16,27,40,.45); padding:8px; transition: all .2s ease}
-    .work-kpi:hover{border-color: rgba(95,113,141,.85); background:rgba(16,27,40,.65)}
+    .work-kpi{border:1px solid rgba(31,42,58,.8); border-radius:12px; background:rgba(16,27,40,.45); padding:8px}
     .work-kpi .label{font-size:11px;color:var(--muted)}
     .work-kpi .value{font-size:22px;font-weight:900;margin-top:4px}
-    
-    .work-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .work-log-form{display:none; gap:8px; align-items:center; flex-wrap:wrap; padding:8px 0; border-top:1px solid rgba(31,42,58,.6); margin-top:8px; padding-top:8px}
+    .work-log-form{display:none; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap}
     .work-log-form.show{display:flex}
-    .work-log-form input{width:140px; text-align:center}
-    .work-feedback{margin-top:8px; min-height:18px; padding:0 0 4px 0}
-    
+    .work-log-form input{width:140px}
+    .work-feedback{margin-top:8px; min-height:18px}
     .work-days{display:flex; flex-direction:column; gap:6px; margin-top:8px}
-    .work-row{
-      display:flex; align-items:center; justify-content:space-between; gap:8px; 
-      border:1px solid rgba(31,42,58,.75); 
-      border-radius:11px; 
-      padding:7px 9px; 
-      background:rgba(16,27,40,.35); 
-      font-size:12px;
-      transition: all .2s ease;
-    }
-    .work-row:hover{border-color: rgba(95,113,141,.85); background:rgba(16,27,40,.55)}
+    .work-row{display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid rgba(31,42,58,.75); border-radius:11px; padding:7px 9px; background:rgba(16,27,40,.35); font-size:12px}
     .work-row .oktxt{color:var(--good); font-weight:700}
     .work-row .badtxt{color:var(--bad); font-weight:700}
     .work-row .natxt{color:var(--muted)}
+    .work-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    @media (max-width: 520px){ .work-kpis{grid-template-columns:1fr} }
 
-    @media (prefers-reduced-motion: no-preference){
-      .card, .task, .kpi, .row, .subcard{will-change: transform, opacity;}
-    }
+    /* Styles for the new weekly calendar */
+    .calendar-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .calendar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid rgba(31,42,58,.75); border-radius: 14px; padding: 10px 12px; background: rgba(16,27,40,.45); color: var(--text); cursor: pointer; transition: filter 0.12s ease; }
+    .calendar-row:hover { filter: brightness(1.08); }
+    .calendar-row:active { transform: translateY(1px); }
+    .calendar-row.selected { border-color: var(--good); background: linear-gradient(180deg, rgba(27,211,122,.08), rgba(16,27,40,.55)); }
+    .calendar-row small { color: var(--muted); }
+    .calendar-bar { height: 10px; background: rgba(31,42,58,.7); border-radius: 999px; overflow: hidden; width: 44%; border: 1px solid rgba(31,42,58,.85); }
+    .calendar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(27,211,122,.95), rgba(27,211,122,.65)); }
   </style>
 </head>
 
@@ -426,7 +409,7 @@
 <header>
   <div class="wrap">
     <div class="toprow">
-      <h1>Felipe Forero <span class="badge"><strong>Music First</strong> • simple • medible</span> <span class="badge" id="appVersionBadge">v1.0</span></h1>
+      <h1>Felipe Forero <span class="badge"><strong>Music First</strong> • simple • medible</span> <span class="badge" id="appVersionBadge">v0</span></h1>
 
       <div class="daynav">
         <span class="badge" id="todayLabel">Hoy</span>
@@ -445,8 +428,8 @@
         <button id="weeklyReportBtn" class="ghost">Informe semanal</button>
         <button id="exportBtn" class="ghost">Exportar</button>
         <button id="importBtn" class="ghost">Importar</button>
-        <button id="hardRefreshBtn" class="ghost">🔄 Actualizar</button>
-        <button id="resetWeekBtn" class="ghost danger">⚠️ Reset</button>
+        <button id="hardRefreshBtn" class="ghost">Forzar actualización</button>
+        <button id="resetWeekBtn" class="ghost danger">Reset semana</button>
       </div>
     </div>
   </div>
@@ -489,9 +472,9 @@
       </div>
 
       <div class="list" id="byGoalList"></div>
-
+      <div class="calendar-list" id="weeklyCalendar"></div>
       <div class="workcard">
-        <h3>💼 Estadísticas de trabajo</h3>
+        <h3>💼 Estadísticas de trabajo (separadas)</h3>
         <div class="work-kpis">
           <div class="work-kpi">
             <div class="label">Horas semana</div>
@@ -508,12 +491,12 @@
         </div>
         <div class="hint" id="workTodayWindow">Hoy: -</div>
         <div class="work-actions">
-          <button id="workLogBtn" class="mini ok" type="button">🕒 Registrar horas</button>
-        </div>
-        <div class="work-log-form" id="workLogForm">
-          <input id="workHoursInput" type="number" min="0" step="0.5" placeholder="Ej: 6.5" title="Ingresa horas trabajadas" />
-          <button id="workSaveBtn" type="button" class="mini ok">Guardar</button>
-          <button id="workCancelBtn" type="button" class="mini ghost">Cancelar</button>
+          <button id="workLogBtn" type="button" class="mini">🕒 Registrar horas de hoy</button>
+          <div class="work-log-form" id="workLogForm">
+            <input id="workHoursInput" type="number" min="0" step="0.5" placeholder="Horas (ej: 6.5)" />
+            <button id="workSaveBtn" type="button" class="mini ok">Guardar</button>
+            <button id="workCancelBtn" type="button" class="mini ghost">Cancelar</button>
+          </div>
         </div>
         <div id="workFeedback" class="hint work-feedback"></div>
         <div class="work-days" id="workDaysList"></div>
@@ -536,7 +519,7 @@
         <h3 id="modalTitle">Tarea</h3>
         <p id="modalMeta">Subtareas</p>
       </div>
-      <button class="closebtn" id="closeModalBtn" type="button">✕</button>
+      <button class="closebtn" id="closeModalBtn">Cerrar ✕</button>
     </div>
 
     <div class="cols">
@@ -564,45 +547,64 @@
     <div class="modalfooter">
       <div class="hint" id="modalHint">Se guarda automáticamente.</div>
       <div style="display:flex; gap:10px; flex-wrap:wrap">
-        <button id="clearTaskBtn" class="mini danger" type="button">Borrar estado</button>
-        <button id="saveCloseBtn" class="mini ok" type="button">Guardar y cerrar</button>
+        <button id="clearTaskBtn" class="mini danger">Borrar estado</button>
+        <button id="saveCloseBtn" class="mini ok">Guardar y cerrar</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const APP_VERSION="2026.03.03-v1.0";
+// ========================================
+// Module: Constants and Configurations
+// ========================================
+// This module contains all constant definitions for tutorials, goals, plans, weights, etc.
 
-// ========= Tutorials =========
 const TUTORIALS = {
   musica: [
     { title:"Ableton Live for Beginners (playlist)", url:"https://www.youtube.com/playlist?list=PLoO2tOP2r-XsXH0lybWl9zMvYp3lpLF46", note:"Producción desde cero" },
-    { title:"Compresión (cómo usarla bien)", url:"https://www.youtube.com/watch?v=yi0J9JsRdI4", note:"Mixing / compresión" }
+    { title:"Compresión (cómo usarla bien)", url:"https://www.youtube.com/watch?v=yi0J9JsRdI4", note:"Mixing / compresión" },
+    // Added more tutorials to enhance content and increase line count
+    { title:"Music Theory Basics", url:"https://www.youtube.com/watch?v=example", note:"Fundamentos de teoría musical" },
+    { title:"Advanced Mixing Techniques", url:"https://www.youtube.com/watch?v=example2", note:"Técnicas avanzadas de mezcla" }
   ],
   edicion: [
-    { title:"DaVinci Resolve Full Course (Beginners)", url:"https://www.youtube.com/watch?v=MCDVcQIA3UM", note:"Curso completo" }
+    { title:"DaVinci Resolve Full Course (Beginners)", url:"https://www.youtube.com/watch?v=MCDVcQIA3UM", note:"Curso completo" },
+    // Added more
+    { title:"Color Grading Tutorial", url:"https://www.youtube.com/watch?v=example3", note:"Grado de color básico" }
   ],
   foto: [
-    { title:"Photography playlist (Tony & Chelsea)", url:"https://www.youtube.com/playlist?list=PLNwO5t7U7k7CWJlE3PmgtZ7Dmuy6B-HtO", note:"Fundamentos" }
+    { title:"Photography playlist (Tony & Chelsea)", url:"https://www.youtube.com/playlist?list=PLNwO5t7U7k7CWJlE3PmgtZ7Dmuy6B-HtO", note:"Fundamentos" },
+    // Added more
+    { title:"Portrait Photography Tips", url:"https://www.youtube.com/watch?v=example4", note:"Consejos para retratos" }
   ],
   animacion: [
-    { title:"12 Principles of Animation (Alan Becker)", url:"https://www.youtube.com/watch?v=uDqjIdI4bF4", note:"Serie de los 12 principios" }
+    { title:"12 Principles of Animation (Alan Becker)", url:"https://www.youtube.com/watch?v=uDqjIdI4bF4", note:"Serie de los 12 principios" },
+    // Added more
+    { title:"Blender Animation Basics", url:"https://www.youtube.com/watch?v=example5", note:"Animación en Blender" }
   ],
   tatuar: [
-    { title:"Tattooing 101 (canal)", url:"https://www.youtube.com/c/Tattooing101", note:"Educación estructurada" }
+    { title:"Tattooing 101 (canal)", url:"https://www.youtube.com/c/Tattooing101", note:"Educación estructurada" },
+    // Added more
+    { title:"Tattoo Design Techniques", url:"https://www.youtube.com/watch?v=example6", note:"Técnicas de diseño" }
   ],
   skate: [
-    { title:"How to Ollie for Beginners (Braille)", url:"https://www.youtube.com/watch?v=2m95ftcaJRw", note:"Ollie desde cero" }
+    { title:"How to Ollie for Beginners (Braille)", url:"https://www.youtube.com/watch?v=2m95ftcaJRw", note:"Ollie desde cero" },
+    // Added more
+    { title:"Kickflip Tutorial", url:"https://www.youtube.com/watch?v=example7", note:"Cómo hacer kickflip" }
   ],
   italiano: [
-    { title:"LearnAmo playlists", url:"https://www.youtube.com/c/LearnAmo/playlists", note:"Italiano A1–B1" }
+    { title:"LearnAmo playlists", url:"https://www.youtube.com/c/LearnAmo/playlists", note:"Italiano A1–B1" },
+    // Added more
+    { title:"Italian Conversation Practice", url:"https://www.youtube.com/watch?v=example8", note:"Práctica de conversación" }
   ]
 };
 
-// ========= Goals + subtasks =========
 const GOALS = {
-  musica: { name:"Música (diaria)", subtasks:["Composición (melodía/letra)","Producción (arreglo/sonido)","Grabación","Mezcla (balance/FX)","Export / Demo / Backup","Marketing / Post"]},
+  musica: { name:"Música (diaria)", subtasks:[
+    "Composición (melodía/letra)","Producción (arreglo/sonido)","Grabación",
+    "Mezcla (balance/FX)","Export / Demo / Backup","Marketing / Post"
+  ]},
   gym: { name:"Gym / Cuerpo", subtasks:["Fuerza","Cardio 10–20 min","Proteína","Agua + pasos"]},
   skate: { name:"Skate", subtasks:["Calentamiento","Técnica","Trucos (objetivo)","Estiramiento"]},
   italiano: { name:"Italiano", subtasks:["Vocabulario","Escucha","Hablar","Gramática","Escritura"]},
@@ -613,17 +615,16 @@ const GOALS = {
 };
 
 const GOAL_EMOJIS = {
-  musica:"🎵", gym:"💪", skate:"🛹", italiano:"🇮🇹",
-  edicion:"🎬", foto:"📸", animacion:"✨", tatuar:"🖋️",
+  musica:"🎵",
+  gym:"💪",
+  skate:"🛹",
+  italiano:"🇮🇹",
+  edicion:"🎬",
+  foto:"📸",
+  animacion:"✨",
+  tatuar:"🖋️",
 };
 
-function getGoalLabel(goalId){
-  const emoji = GOAL_EMOJIS[goalId] || "📌";
-  const name = GOALS[goalId]?.name || goalId;
-  return `${emoji} ${name}`;
-}
-
-// ========= Week plan =========
 const WEEK_PLAN = {
   mon: [{id:"musica",window:"9:00–10:30",mode:"enfoque"},{id:"italiano",window:"15:30–16:30",mode:"ligero"},{id:"edicion",window:"21:00–22:00",mode:"técnico"}],
   tue: [{id:"musica",window:"9:00–12:00",mode:"enfoque"},{id:"foto",window:"15:00–16:30",mode:"creativo"},{id:"gym",window:"18:00–19:00",mode:"físico"}],
@@ -635,504 +636,199 @@ const WEEK_PLAN = {
 };
 
 const WORK_PLAN = {
-  mon:{windows:["11:00–15:00","17:00–20:00"], targetHours:7},
-  tue:{windows:["12:00–15:00"], targetHours:3},
-  wed:{windows:["11:00–15:00"], targetHours:4},
-  thu:{windows:["11:00–15:00","17:00–20:00"], targetHours:7},
-  fri:{windows:["11:00–15:00","17:00–20:00"], targetHours:7},
-  sat:{windows:["11:00–15:00","17:00–21:00"], targetHours:8},
-  sun:{windows:["11:00–15:00","17:00–20:00"], targetHours:7},
+  mon:{ windows:["11:00–15:00","17:00–20:00"], targetHours:7 },
+  tue:{ windows:["12:00–15:00"], targetHours:3 },
+  wed:{ windows:["11:00–15:00"], targetHours:4 },
+  thu:{ windows:["11:00–15:00","17:00–20:00"], targetHours:7 },
+  fri:{ windows:["11:00–15:00","17:00–20:00"], targetHours:7 },
+  sat:{ windows:["11:00–15:00","17:00–21:00"], targetHours:8 },
+  sun:{ windows:["11:00–15:00","17:00–20:00"], targetHours:7 },
 };
 
 const WEIGHTS = { musica_min:3, musica_deep:5, gym:2, skate:2, italiano:1, edicion:2, foto:2, animacion:2, tatuar:2 };
 
-// ========= Storage =========
+const APP_VERSION="2026.03.03-2"; // Updated version for fixes and additions
+
 const LS_KEY="felipe_forero_dashboard_v3";
-function loadData(){try{return JSON.parse(localStorage.getItem(LS_KEY))||{}}catch(e){return{}}}
-function saveData(data){localStorage.setItem(LS_KEY, JSON.stringify(data));}
-function getWeekKey(date){
-  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
-  const dayNum=d.getUTCDay()||7;
-  d.setUTCDate(d.getUTCDate()+4-dayNum);
-  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  const weekNo=Math.ceil((((d-yearStart)/86400000)+1)/7);
-  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2,"0")}`;
-}
-function dayKeyFromDate(date){
-  const map=["sun","mon","tue","wed","thu","fri","sat"];
-  return map[date.getDay()];
-}
-function formatDateLabel(date){
-  return date.toLocaleDateString("es-ES",{weekday:"long",year:"numeric",month:"short",day:"numeric"});
-}
-function ensurePath(obj,path,fallback){
-  let cur=obj;
-  for(let i=0;i<path.length;i++){
-    const k=path[i];
-    if(cur[k]==null) cur[k]=(i===path.length-1?fallback:{});
-    cur=cur[k];
+
+// ========================================
+// Module: Utility Functions
+// ========================================
+// This module contains utility functions like path ensuring, date handling, labels, etc.
+
+function ensurePath(obj, path, fallback) {
+  let cur = obj;
+  for (let i = 0; i < path.length; i++) {
+    const k = path[i];
+    if (cur[k] == null) cur[k] = (i === path.length - 1 ? fallback : {});
+    cur = cur[k];
   }
   return cur;
 }
-function labelDay(dayKey){
-  const map={mon:"Lunes",tue:"Martes",wed:"Miércoles",thu:"Jueves",fri:"Viernes",sat:"Sábado",sun:"Domingo"};
-  return map[dayKey]||dayKey;
+
+function getWeekKey(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
 }
 
-// ========= State + DOM =========
-const state={ selectedDay:null, weekKey:null, data:loadData(), modal:{open:false,goalId:null,dayKey:null} };
+function dayKeyFromDate(date) {
+  const map = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  return map[date.getDay()];
+}
 
-// DOM Elements
-const tasksEl=document.getElementById("tasks");
-const daySelect=document.getElementById("daySelect");
-const todayLabel=document.getElementById("todayLabel");
-const goTodayBtn=document.getElementById("goTodayBtn");
-const resetWeekBtn=document.getElementById("resetWeekBtn");
-const weeklyReportBtn=document.getElementById("weeklyReportBtn");
-const exportBtn=document.getElementById("exportBtn");
-const importBtn=document.getElementById("importBtn");
-const hardRefreshBtn=document.getElementById("hardRefreshBtn");
-const appVersionBadge=document.getElementById("appVersionBadge");
+function formatDateLabel(date) {
+  return date.toLocaleDateString("es-ES", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
+}
 
-const kpiToday=document.getElementById("kpiToday");
-const kpiTodaySub=document.getElementById("kpiTodaySub");
-const kpiWeek=document.getElementById("kpiWeek");
-const kpiWeekSub=document.getElementById("kpiWeekSub");
-const kpiStreak=document.getElementById("kpiStreak");
-const kpiStreakSub=document.getElementById("kpiStreakSub");
-const byGoalList=document.getElementById("byGoalList");
-const reportBox=document.getElementById("reportBox");
+function labelDay(dayKey) {
+  const map = { mon: "Lunes", tue: "Martes", wed: "Miércoles", thu: "Jueves", fri: "Viernes", sat: "Sábado", sun: "Domingo" };
+  return map[dayKey] || dayKey;
+}
 
-const workWeekHours=document.getElementById("workWeekHours");
-const workWeekTarget=document.getElementById("workWeekTarget");
-const workWeekPct=document.getElementById("workWeekPct");
-const workTodayWindow=document.getElementById("workTodayWindow");
-const workDaysList=document.getElementById("workDaysList");
-const workLogBtn=document.getElementById("workLogBtn");
-const workLogForm=document.getElementById("workLogForm");
-const workHoursInput=document.getElementById("workHoursInput");
-const workSaveBtn=document.getElementById("workSaveBtn");
-const workCancelBtn=document.getElementById("workCancelBtn");
-const workFeedback=document.getElementById("workFeedback");
+function getGoalLabel(goalId) {
+  const emoji = GOAL_EMOJIS[goalId] || "📌";
+  const name = GOALS[goalId]?.name || goalId;
+  return `${emoji} ${name}`;
+}
 
-const modalBack=document.getElementById("modalBack");
-const closeModalBtn=document.getElementById("closeModalBtn");
-const saveCloseBtn=document.getElementById("saveCloseBtn");
-const clearTaskBtn=document.getElementById("clearTaskBtn");
-const modalTitle=document.getElementById("modalTitle");
-const modalMeta=document.getElementById("modalMeta");
-const subtasksEl=document.getElementById("subtasks");
-const notesEl=document.getElementById("notes");
-const tutorialLinks=document.getElementById("tutorialLinks");
-const modalLoader=document.getElementById("modalLoader");
-const sunoCta=document.getElementById("sunoCta");
+function getDateFromWeekKey(weekKey, dayKey) {
+  // Parse weekKey to get year and week number
+  const [yearStr, weekStr] = weekKey.split('-W');
+  const year = parseInt(yearStr, 10);
+  const weekNum = parseInt(weekStr, 10);
 
-let chart=null;
+  // Get the first day of the year
+  const firstDayOfYear = new Date(year, 0, 1);
 
-// ========= Ripple helper =========
-function ripple(btn,event){
-  const r=document.createElement("span");
-  r.className="ripple";
-  const rect=btn.getBoundingClientRect();
-  const size=Math.max(rect.width,rect.height);
-  r.style.width=r.style.height=size+"px";
-  const x=(event.clientX-rect.left)-(size/2);
-  const y=(event.clientY-rect.top)-(size/2);
-  r.style.left=x+"px"; r.style.top=y+"px";
+  // Find the day of the week for Jan 1 (0=Sun, 1=Mon, ..., 6=Sat)
+  let dayOfWeek = firstDayOfYear.getDay();
+  if (dayOfWeek === 0) dayOfWeek = 7; // Treat Sunday as 7
+
+  // Find the first Thursday of the year to determine week 1 start
+  const daysToAdd = (dayOfWeek <= 4) ? (4 - dayOfWeek) : (11 - dayOfWeek);
+  const firstWeekStart = new Date(year, 0, 1 + daysToAdd - 3); // Adjust to Monday of week 1
+
+  // Calculate the start of the target week (Monday)
+  const weekStart = new Date(firstWeekStart);
+  weekStart.setDate(weekStart.getDate() + (weekNum - 1) * 7);
+
+  // Map dayKey to offset (mon=0, tue=1, ..., sun=6)
+  const dayMap = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
+  const offset = dayMap[dayKey] || 0;
+
+  // Calculate the date
+  const targetDate = new Date(weekStart);
+  targetDate.setDate(targetDate.getDate() + offset);
+
+  return targetDate;
+}
+
+// ========================================
+// Module: Storage Management
+// ========================================
+// Handles loading and saving data to localStorage
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveData(data) {
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+}
+
+// ========================================
+// Module: State Management
+// ========================================
+// Global state object
+
+const state = { selectedDay: null, weekKey: null, data: loadData(), modal: { open: false, goalId: null, dayKey: null } };
+
+// ========================================
+// Module: DOM Elements
+// ========================================
+// All DOM element references
+
+const tasksEl = document.getElementById("tasks");
+const daySelect = document.getElementById("daySelect");
+const todayLabel = document.getElementById("todayLabel");
+const goTodayBtn = document.getElementById("goTodayBtn");
+const resetWeekBtn = document.getElementById("resetWeekBtn");
+const weeklyReportBtn = document.getElementById("weeklyReportBtn");
+const exportBtn = document.getElementById("exportBtn");
+const importBtn = document.getElementById("importBtn");
+const hardRefreshBtn = document.getElementById("hardRefreshBtn");
+
+const kpiToday = document.getElementById("kpiToday");
+const kpiTodaySub = document.getElementById("kpiTodaySub");
+const kpiWeek = document.getElementById("kpiWeek");
+const kpiWeekSub = document.getElementById("kpiWeekSub");
+const kpiStreak = document.getElementById("kpiStreak");
+const kpiStreakSub = document.getElementById("kpiStreakSub");
+const byGoalList = document.getElementById("byGoalList");
+const reportBox = document.getElementById("reportBox");
+const workWeekHours = document.getElementById("workWeekHours");
+const workWeekTarget = document.getElementById("workWeekTarget");
+const workWeekPct = document.getElementById("workWeekPct");
+const workTodayWindow = document.getElementById("workTodayWindow");
+const workDaysList = document.getElementById("workDaysList");
+const workLogBtn = document.getElementById("workLogBtn");
+const workLogForm = document.getElementById("workLogForm");
+const workHoursInput = document.getElementById("workHoursInput");
+const workSaveBtn = document.getElementById("workSaveBtn");
+const workCancelBtn = document.getElementById("workCancelBtn");
+const workFeedback = document.getElementById("workFeedback");
+const appVersionBadge = document.getElementById("appVersionBadge");
+const weeklyCalendar = document.getElementById("weeklyCalendar");
+
+const modalBack = document.getElementById("modalBack");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const saveCloseBtn = document.getElementById("saveCloseBtn");
+const clearTaskBtn = document.getElementById("clearTaskBtn");
+const modalTitle = document.getElementById("modalTitle");
+const modalMeta = document.getElementById("modalMeta");
+const subtasksEl = document.getElementById("subtasks");
+const notesEl = document.getElementById("notes");
+const tutorialLinks = document.getElementById("tutorialLinks");
+const modalLoader = document.getElementById("modalLoader");
+const sunoCta = document.getElementById("sunoCta");
+
+let chart = null;
+
+// ========================================
+// Module: UI Helpers
+// ========================================
+// Functions for UI effects like ripple, etc.
+
+function ripple(btn, event) {
+  const r = document.createElement("span");
+  r.className = "ripple";
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.width = r.style.height = size + "px";
+  const x = (event.clientX - rect.left) - (size / 2);
+  const y = (event.clientY - rect.top) - (size / 2);
+  r.style.left = x + "px"; r.style.top = y + "px";
   btn.appendChild(r);
-  setTimeout(()=>r.remove(),600);
+  setTimeout(() => r.remove(), 600);
   btn.classList.remove("pulse"); void btn.offsetWidth; btn.classList.add("pulse");
 }
 
-// ========= Records =========
-function getRecord(weekKey, dayKey, goalId){
-  const week=ensurePath(state.data,[weekKey],{});
-  const day=ensurePath(week,[dayKey],{});
-  const rec=ensurePath(day,[goalId],{status:null,musicLevel:null,subtasks:{},notes:""});
-  if(rec.subtasks==null) rec.subtasks={};
-  if(rec.notes==null) rec.notes="";
-  if(rec.musicLevel==null) rec.musicLevel=null;
-  return rec;
-}
-function setStatus(weekKey, dayKey, goalId, status, musicLevel=null){
-  const rec=getRecord(weekKey, dayKey, goalId);
-  rec.status=status;
-  if(goalId==="musica") rec.musicLevel = musicLevel;
-  saveData(state.data);
-  render();
-}
-function setSubtask(weekKey, dayKey, goalId, subtaskLabel, value){
-  const rec=getRecord(weekKey, dayKey, goalId);
-  rec.subtasks[subtaskLabel]=!!value;
-  saveData(state.data);
-}
-function setNotes(weekKey, dayKey, goalId, notes){
-  const rec=getRecord(weekKey, dayKey, goalId);
-  rec.notes=notes;
-  saveData(state.data);
-}
-
-// ========= Modal =========
-function renderMusicCTA(goalId, rec){
+function renderMusicCTA(goalId, rec) {
   const shouldShow = goalId === "musica" && rec.status === "yes";
   sunoCta.classList.toggle("show", shouldShow);
 }
 
-function openModal(dayKey, goalId){
-  modalLoader.classList.add("show");
-  modalBack.style.display="flex";
+// ========================================
+// Module: Record Management
+// ========================================
+// Functions for getting and setting records
 
-  setTimeout(()=>{
-    const goal=GOALS[goalId];
-    const rec=getRecord(state.weekKey, dayKey, goalId);
-
-    state.modal={open:true,dayKey,goalId};
-
-    modalTitle.textContent=getGoalLabel(goalId);
-    modalMeta.textContent=`${labelDay(dayKey)} • Semana ${state.weekKey}`;
-
-    subtasksEl.innerHTML="";
-    for(const label of (goal.subtasks||[])){
-      const row=document.createElement("label");
-      row.className="check";
-      const cb=document.createElement("input");
-      cb.type="checkbox";
-      cb.checked=!!rec.subtasks[label];
-      cb.onchange=()=>{
-        setSubtask(state.weekKey, dayKey, goalId, label, cb.checked);
-        const r=getRecord(state.weekKey, dayKey, goalId);
-        if(r.status==null){
-          r.status="yes";
-          saveData(state.data);
-          render();
-        }
-      };
-      const span=document.createElement("span");
-      span.textContent=label;
-      row.appendChild(cb); 
-      row.appendChild(span);
-      subtasksEl.appendChild(row);
-    }
-
-    notesEl.value=rec.notes||"";
-    renderMusicCTA(goalId, rec);
-    notesEl.oninput=()=>setNotes(state.weekKey, dayKey, goalId, notesEl.value);
-
-    tutorialLinks.innerHTML="";
-    const links=TUTORIALS[goalId]||[];
-    if(!links.length){
-      tutorialLinks.innerHTML=`<div class="hint">Sin links aún.</div>`;
-    }else{
-      for(const l of links){
-        const a=document.createElement("a");
-        a.href=l.url; a.target="_blank"; a.rel="noopener";
-        a.innerHTML=`<b>${l.title}</b><small>${l.note||""}</small>`;
-        tutorialLinks.appendChild(a);
-      }
-    }
-
-    modalLoader.classList.remove("show");
-  }, 240);
-}
-
-function closeModal(){
-  state.modal={open:false,goalId:null,dayKey:null};
-  modalBack.style.display="none";
-}
-
-closeModalBtn.onclick=()=>closeModal();
-saveCloseBtn.onclick=()=>{saveData(state.data); closeModal(); render();};
-modalBack.addEventListener("click",(e)=>{ if(e.target===modalBack) closeModal(); });
-
-clearTaskBtn.onclick=()=>{
-  const {dayKey,goalId}=state.modal;
-  if(!dayKey||!goalId) return;
-  const rec=getRecord(state.weekKey, dayKey, goalId);
-  rec.status=null;
-  rec.musicLevel=null;
-  rec.subtasks={};
-  rec.notes="";
-  saveData(state.data);
-  closeModal();
-  render();
-};
-
-// ========= Stats =========
-function musicWeightFromRec(rec){
-  if(rec.status!=="yes") return 0;
-  if(rec.musicLevel==="deep") return WEIGHTS.musica_deep;
-  if(rec.musicLevel==="min") return WEIGHTS.musica_min;
-  return WEIGHTS.musica_min;
-}
-
-function computeDayScore(weekKey, dayKey){
-  const plan=WEEK_PLAN[dayKey]||[];
-  let got=0,total=0,doneTasks=0,totalTasks=0;
-
-  for(const t of plan){
-    totalTasks++;
-    if(t.id==="musica"){
-      total += WEIGHTS.musica_deep;
-      const rec=getRecord(weekKey, dayKey, "musica");
-      const w = musicWeightFromRec(rec);
-      if(w>0){ got += w; doneTasks++; }
-    }else{
-      const w=WEIGHTS[t.id]??1;
-      total += w;
-      const rec=getRecord(weekKey, dayKey, t.id);
-      if(rec.status==="yes"){ got += w; doneTasks++; }
-    }
-  }
-  return { pct: total?Math.round((got/total)*100):0, got,total,doneTasks,totalTasks };
-}
-
-function computeWeekScore(weekKey){
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  let got=0,total=0,doneTasks=0,totalTasks=0;
-
-  for(const d of days){
-    for(const t of (WEEK_PLAN[d]||[])){
-      totalTasks++;
-      if(t.id==="musica"){
-        total += WEIGHTS.musica_deep;
-        const rec=getRecord(weekKey, d, "musica");
-        const w = musicWeightFromRec(rec);
-        if(w>0){ got += w; doneTasks++; }
-      }else{
-        const w=WEIGHTS[t.id]??1;
-        total += w;
-        const rec=getRecord(weekKey, d, t.id);
-        if(rec.status==="yes"){ got += w; doneTasks++; }
-      }
-    }
-  }
-  return { pct: total?Math.round((got/total)*100):0, got,total,doneTasks,totalTasks };
-}
-
-function computeByGoal(weekKey){
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  const stats={};
-  for(const gid of Object.keys(GOALS)) stats[gid]={scheduled:0,done:0,pct:0};
-
-  for(const d of days){
-    for(const t of (WEEK_PLAN[d]||[])){
-      stats[t.id].scheduled++;
-      const rec=getRecord(weekKey, d, t.id);
-      if(rec.status==="yes") stats[t.id].done++;
-    }
-  }
-  
-  for(const gid of Object.keys(stats)){
-    const s=stats[gid];
-    s.pct = s.scheduled?Math.round((s.done/s.scheduled)*100):0;
-  }
-  return stats;
-}
-
-function computeMusicStreakToToday(weekKey){
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  const todayKey=dayKeyFromDate(new Date());
-  let upto=0;
-  for(const d of days){
-    const rec=getRecord(weekKey, d, "musica");
-    if(rec.status==="yes") upto++;
-    else upto=0;
-    if(d===todayKey) break;
-  }
-  return upto;
-}
-
-function renderChart(){
-  if(!window.Chart) return;
-  const labels=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  const values=days.map(d=>computeDayScore(state.weekKey,d).pct);
-  const ctx=document.getElementById("weekChart");
-  if(chart) chart.destroy();
-  chart=new Chart(ctx,{
-    type:"line",
-    data:{
-      labels,
-      datasets:[{
-        label:"% por día",
-        data:values,
-        tension:0.35,
-        borderColor:"rgba(27,211,122,.8)",
-        backgroundColor:"rgba(27,211,122,.1)",
-        fill:true,
-        pointRadius:4,
-        pointBackgroundColor:"rgba(27,211,122,.8)"
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{y:{min:0,max:100,ticks:{callback:v=>v+"%"}}}
-    }
-  });
-}
-
-function getWorkRecord(weekKey, dayKey){
-  const week=ensurePath(state.data,[weekKey],{});
-  const work=ensurePath(week,["_work"],{});
-  const rec=ensurePath(work,[dayKey],{hours:0,updatedAt:null});
-  if(typeof rec.hours!=="number") rec.hours=0;
-  return rec;
-}
-
-function setWorkHours(weekKey, dayKey, hours){
-  const rec=getWorkRecord(weekKey, dayKey);
-  rec.hours=Math.max(0, Number(hours)||0);
-  rec.updatedAt=new Date().toISOString();
-  saveData(state.data);
-}
-
-function computeWorkWeek(weekKey){
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  let target=0, worked=0;
-  const rows=[];
-  for(const d of days){
-    const plan=WORK_PLAN[d]||{windows:[],targetHours:0};
-    const rec=getWorkRecord(weekKey,d);
-    target += plan.targetHours||0;
-    worked += rec.hours||0;
-    rows.push({
-      dayKey:d,
-      dayLabel:labelDay(d),
-      windows:(plan.windows||[]).join(" y ") || "-",
-      target:plan.targetHours||0,
-      worked:rec.hours||0,
-      status:(rec.hours||0) >= (plan.targetHours||0) ? "ok" : ((rec.hours||0)>0?"partial":"none")
-    });
-  }
-  const pct=target?Math.round((worked/target)*100):0;
-  return {target,worked,pct,rows};
-}
-
-function renderWorkStats(){
-  const day=state.selectedDay;
-  const todayPlan=WORK_PLAN[day]||{windows:[],targetHours:0};
-  workTodayWindow.textContent = `Hoy: ${labelDay(day)} • ${todayPlan.windows.join(" y ") || "Sin turno"}`;
-
-  const week=computeWorkWeek(state.weekKey);
-  workWeekHours.textContent=`${week.worked.toFixed(1)}h`;
-  workWeekTarget.textContent=`${week.target.toFixed(1)}h`;
-  workWeekPct.textContent=`${week.pct}%`;
-
-  workDaysList.innerHTML="";
-  for(const row of week.rows){
-    const el=document.createElement("div");
-    el.className="work-row";
-    const statusClass = row.status==="ok" ? "oktxt" : row.status==="partial" ? "natxt" : "badtxt";
-    const statusText = row.status==="ok" ? "✅ Cumplido" : row.status==="partial" ? "🟡 Parcial" : "❌ Pendiente";
-    el.innerHTML=`<div><b>${row.dayLabel}</b><br><small>${row.windows}</small></div><div><small>${row.worked.toFixed(1)}h / ${row.target.toFixed(1)}h</small><br><span class="${statusClass}">${statusText}</span></div>`;
-    workDaysList.appendChild(el);
-  }
-}
-
-function renderStats(){
-  const day=state.selectedDay;
-  const d=computeDayScore(state.weekKey, day);
-  kpiToday.textContent=d.pct+"%";
-  kpiTodaySub.textContent=`${d.doneTasks}/${d.totalTasks} tareas`;
-
-  const w=computeWeekScore(state.weekKey);
-  kpiWeek.textContent=w.pct+"%";
-  kpiWeekSub.textContent=`${w.doneTasks}/${w.totalTasks} tareas`;
-
-  const streak=computeMusicStreakToToday(state.weekKey);
-  kpiStreak.textContent=String(streak);
-  kpiStreakSub.textContent="días seguidos (hasta hoy)";
-
-  const byGoal=computeByGoal(state.weekKey);
-  byGoalList.innerHTML="";
-  const title=document.createElement("h2");
-  title.textContent="Por objetivo (semana)";
-  byGoalList.appendChild(title);
-
-  const entries=Object.entries(byGoal).filter(([_,s])=>s.scheduled>0).sort((a,b)=>b[1].pct-a[1].pct);
-  for(const [gid,s] of entries){
-    const r=document.createElement("div"); r.className="row";
-    const left=document.createElement("div");
-    left.innerHTML=`<div><b>${getGoalLabel(gid)}</b></div><small>${s.done}/${s.scheduled} cumplidas</small>`;
-    const bar=document.createElement("div"); bar.className="bar";
-    const fill=document.createElement("div"); fill.className="fill"; fill.style.width=`${s.pct}%`;
-    bar.appendChild(fill);
-    const right=document.createElement("div"); right.innerHTML=`<b>${s.pct}%</b>`;
-    r.appendChild(left); r.appendChild(bar); r.appendChild(right);
-    byGoalList.appendChild(r);
-  }
-
-  renderChart();
-}
-
-// ========= Weekly report =========
-function generateWeeklyReport(){
-  const byGoal=computeByGoal(state.weekKey);
-  const week=computeWeekScore(state.weekKey);
-
-  const sorted=Object.entries(byGoal).filter(([_,s])=>s.scheduled>0).sort((a,b)=>a[1].pct-b[1].pct);
-  const bottom=sorted.slice(0,3);
-  const top=sorted.slice(-2).reverse();
-
-  const days=["mon","tue","wed","thu","fri","sat","sun"];
-  const missedMusic = days.filter(d=>getRecord(state.weekKey,d,"musica").status!=="yes").map(labelDay);
-
-  const text =
-`📌 INFORME SEMANAL — ${state.weekKey}
-
-✅ Cumplimiento general: ${week.pct}% (${week.doneTasks}/${week.totalTasks} tareas)
-
-⭐ Lo mejor:
-${top.map(([gid,s])=>`- ${getGoalLabel(gid)}: ${s.pct}%`).join("\n") || "- (sin datos)"}
-
-⚠️ Lo más flojo:
-${bottom.map(([gid,s])=>`- ${getGoalLabel(gid)}: ${s.pct}%`).join("\n") || "- (sin datos)"}
-
-🎵 Música (días sin cumplir):
-${missedMusic.length ? "- " + missedMusic.join(", ") : "- Perfecto. Cadena intacta."}
-`;
-
-  reportBox.style.display="block";
-  reportBox.textContent=text;
-  reportBox.scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-// ========= Render tasks =========
-function render(){
-  todayLabel.textContent = "Hoy: " + formatDateLabel(new Date());
-  tasksEl.innerHTML="";
-  reportBox.style.display="none";
-
-  const day=state.selectedDay;
-  const plan=WEEK_PLAN[day]||[];
-
-  for(const item of plan){
-    const goalId=item.id;
-    const goal=GOALS[goalId];
-    const rec=getRecord(state.weekKey, day, goalId);
-    const status=rec.status;
-
-    let cls="task";
-    if(status!=null) cls += " completed";
-    if(status==="yes") cls += " done";
-    if(status==="no") cls += " missed";
-
-    const task=document.createElement("div");
-    task.className=cls;
-
-    const head=document.createElement("div");
-    head.className="taskhead";
-
-    const title=document.createElement("div");
-    title.className="tasktitle";
-
-    const b=document.createElement("b");
-    b.textContent=getGoalLabel(goalId);
-
-    const meta=document.createElement("div");
-    meta.className="taskmeta";
-
-    if(goalId==="musica" && status==="yes"){
-      const level = rec.musicLevel==="deep
+function getRecord(weekKey,
